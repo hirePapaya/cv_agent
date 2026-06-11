@@ -1,8 +1,13 @@
-from agent.graph import AgentState, agent
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from agent.graph import agent
+from agent.states import CVAgentState
 
 
 def main() -> None:
-    print("CV Coach Agent CLI. Type 'exit' or 'quit' to stop.")
+    print("CV Coach Agent CLI. Paste a job posting. Type 'exit' or 'quit' to stop.")
     while True:
         try:
             message = input("> ").strip()
@@ -15,8 +20,8 @@ def main() -> None:
         if not message:
             continue
 
-        result: AgentState = agent.invoke(AgentState(message=message))
-        print(result["message"])
+        result = agent.invoke(CVAgentState(job_description=message))
+        print(result["job_posting"])
 
 
 if __name__ == "__main__":

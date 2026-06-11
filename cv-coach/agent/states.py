@@ -1,11 +1,14 @@
-from typing import TypedDict, Annotated
+from typing import TypedDict, Annotated, Union
 from operator import add
+from .models import SectionContent, JobPosting
+
+
 
 class SectionState(TypedDict):
     """Represents the state of a single CV section (e.g., experience, education)."""
     name: str                  # "experience", "education", "skills"...
-    original_content: str
-    current_content: str       # evolves as you update
+    original_content: Union[SectionContent, None]  # as extracted from the CV (may be unstructured)
+    current_content: Union[SectionContent, None]
     score: float | None
     score_threshold: float     # what counts as "good enough"
     evaluation_notes: str      # why it scored that way
@@ -25,6 +28,7 @@ class CVAgentState(TypedDict):
     section_order: list[str]             # processing queue
     user_profile: dict                   # accumulated info from answers (reusable across sections!)
     target_role: str | None              # tailoring the CV toward a job?
-    job_description: str | None
+    job_description: str | None          # raw job posting text, as provided by the user
+    job_posting: JobPosting | None      # parsed job posting information
     messages: Annotated[list, add]       # conversation history for interrupts
     final_cv: str | None
