@@ -1,0 +1,326 @@
+/* global React */
+const { useState, useRef, useEffect, useCallback } = React;
+
+const API_BASE = window.CV_STUDIO_API_BASE || "http://localhost:8000";
+
+// ---------- tiny inline icons (Lucide-style, 1.5px) ----------
+const Icon = {
+  download: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+      strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M12 3v12M7 11l5 4 5-4M5 21h14" />
+    </svg>
+  ),
+  send: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"
+      strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M5 12h13M12 5l7 7-7 7" />
+    </svg>
+  ),
+};
+
+const Mark = (p) => (
+  <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" {...p}>
+    <rect width="28" height="28" rx="3" fill="#1A1615" />
+    <rect x="8" y="8" width="12" height="12" rx="1.5" fill="#DBFFA5" />
+  </svg>
+);
+
+// ---------- helpers ----------
+function nowStamp() {
+  const d = new Date();
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+// ---------- apply ops to the CV ----------
+function parsePath(path) {
+  const tokens = [];
+  const re = /([a-zA-Z_]+)|\[(\d+)\]/g;
+  let m;
+  while ((m = re.exec(path))) {
+    tokens.push(m[1] !== undefined ? m[1] : Number(m[2]));
+  }
+  return tokens;
+}
+function resolve(obj, tokens) {
+  let cur = obj;
+  for (const t of tokens) {
+    if (cur == null) return undefined;
+    cur = cur[t];
+  }
+  return cur;
+}
+function applyOps(baseCv, ops) {
+  const cv = JSON.parse(JSON.stringify(baseCv));
+  let applied = 0;
+  for (const op of (ops || [])) {
+    try {
+      const tokens = parsePath(op.path || "");
+      if (op.op === "set") {
+        const parent = resolve(cv, tokens.slice(0, -1));
+        if (parent == null) continue;
+        parent[tokens[tokens.length - 1]] = op.value;
+        applied++;
+      } else if (op.op === "add") {
+        const arr = resolve(cv, tokens);
+        if (!Array.isArray(arr)) continue;
+        const idx = Number.isInteger(op.index) ? op.index : arr.length;
+        arr.splice(idx, 0, op.value);
+        applied++;
+      } else if (op.op === "remove") {
+        const parent = resolve(cv, tokens.slice(0, -1));
+        const last = tokens[tokens.length - 1];
+        if (Array.isArray(parent) && typeof last === "number") { parent.splice(last, 1); applied++; }
+        else if (parent && typeof parent === "object") { delete parent[last]; applied++; }
+      } else if (op.op === "reorder") {
+        const arr = resolve(cv, tokens);
+        if (!Array.isArray(arr) || !Array.isArray(op.order)) continue;
+        const next = op.order.map((i) => arr[i]).filter((x) => x !== undefined);
+        if (next.length === arr.length) { resolve(cv, tokens.slice(0, -1))[tokens[tokens.length - 1]] = next; applied++; }
+      }
+    } catch (e) { /* skip bad op */ }
+  }
+  return { cv, applied };
+}
+
+// ---------- log + message renderers ----------
+function LogBlock({ lines }) {
+  return (
+    <div className="log">
+      {lines.map((l, i) => (
+        <div key={i} className={"log-line" + (l.pending ? " is-pending" : "") + (l.error ? " is-error" : "")}>
+          <span className="log-time">{l.time}</span>
+          {l.pending ? (
+            <span className="typing"><i /><i /><i /></span>
+          ) : (
+            <span className="log-tick">{l.error ? "×" : "›"}</span>
+          )}
+          <span className="log-text">{l.text}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Message({ m }) {
+  if (m.type === "log") return <LogBlock lines={m.lines} />;
+  const role = m.type === "user" ? "You" : "Agent";
+  return (
+    <div className={"msg msg-" + m.type}>
+      <p className="msg-role">{role}</p>
+      <div className="msg-body">{m.text}</div>
+    </div>
+  );
+}
+
+const SUGGESTIONS = [
+  "Tighten the summary",
+  "Make bullets more results-driven",
+  "Fix the Fullmind dates",
+  "Add a one-line headline",
+];
+
+// ---------- main app ----------
+function Studio() {
+  const [data, setData] = useState(() => JSON.parse(JSON.stringify(window.RESUME)));
+  const [messages, setMessages] = useState(() => [
+    { id: 1, type: "log", lines: [
+      { time: nowStamp(), text: "Loaded Rafael Campo — CV" },
+      { time: nowStamp(), text: "Layout: single-column editorial · A4" },
+    ] },
+    { id: 2, type: "agent", text: "I'm your CV editor. Tell me what to sharpen — tighten the summary, rework bullets, reorder sections — and I'll edit the page live. Export to PDF anytime." },
+  ]);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [flash, setFlash] = useState(false);
+
+  const threadRef = useRef(null);
+  const taRef = useRef(null);
+  const idRef = useRef(3);
+  const nextId = () => idRef.current++;
+
+  // keep window.RESUME synced so print + any other refs match live state
+  useEffect(() => { window.RESUME = data; }, [data]);
+
+  useEffect(() => {
+    const el = threadRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, busy]);
+
+  const autosize = () => {
+    const ta = taRef.current;
+    if (!ta) return;
+    ta.style.height = "auto";
+    ta.style.height = Math.min(ta.scrollHeight, 132) + "px";
+  };
+
+  const send = useCallback(async (text) => {
+    const instruction = (text != null ? text : input).trim();
+    if (!instruction || busy) return;
+    setInput("");
+    if (taRef.current) taRef.current.style.height = "auto";
+
+    const userMsg = { id: nextId(), type: "user", text: instruction };
+    const pendingId = nextId();
+    const pendingMsg = { id: pendingId, type: "log", lines: [
+      { time: nowStamp(), text: "Reading the CV and your request", pending: true },
+    ] };
+    const history = messages;
+    setMessages((m) => [...m, userMsg, pendingMsg]);
+    setBusy(true);
+
+    let result = null, errored = false;
+    try {
+      const res = await fetch(`${API_BASE}/edit-cv`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cv: data,
+          history: history
+            .filter((m) => m.type === "user" || m.type === "agent")
+            .slice(-6)
+            .map((m) => ({ role: m.type, text: m.text })),
+          instruction,
+        }),
+      });
+      if (!res.ok) throw new Error(`request failed: ${res.status}`);
+      result = await res.json();
+    } catch (e) {
+      errored = true;
+    }
+
+    setBusy(false);
+
+    if (errored || !result) {
+      setMessages((m) => m.map((x) => x.id === pendingId ? {
+        ...x, lines: [{ time: nowStamp(), text: "Could not reach the editor — try again.", error: true }],
+      } : x));
+      return;
+    }
+
+    const logLines = (Array.isArray(result.log) ? result.log : [])
+      .filter(Boolean)
+      .map((t) => ({ time: nowStamp(), text: String(t) }));
+
+    let nextCv = data, applied = 0;
+    if (Array.isArray(result.ops) && result.ops.length) {
+      const r = applyOps(data, result.ops);
+      nextCv = r.cv; applied = r.applied;
+    }
+    const changed = applied > 0 && JSON.stringify(nextCv) !== JSON.stringify(data);
+    if (changed) {
+      setData(nextCv);
+      setFlash(true);
+      setTimeout(() => setFlash(false), 750);
+    }
+    if (logLines.length === 0) {
+      logLines.push({ time: nowStamp(), text: changed ? "Updated the CV" : "No changes made" });
+    }
+
+    setMessages((m) => {
+      const updated = m.map((x) => x.id === pendingId ? { ...x, lines: logLines } : x);
+      if (result.reply) updated.push({ id: nextId(), type: "agent", text: String(result.reply) });
+      return updated;
+    });
+  }, [input, busy, messages, data]);
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  return (
+    <div className="studio">
+      {/* LEFT — chat / agent */}
+      <aside className="chat">
+        <div className="chat-head">
+          <div className="chat-brand">
+            <Mark className="chat-mark" />
+            <div className="chat-titles">
+              <p className="chat-title">CV Studio</p>
+              <p className="chat-sub">Rafael Campo</p>
+            </div>
+          </div>
+          <button className="btn-export" onClick={() => window.print()} title="Export the CV as a PDF">
+            {Icon.download()} Export PDF
+          </button>
+        </div>
+
+        <div className="thread" ref={threadRef}>
+          {messages.map((m) => <Message key={m.id} m={m} />)}
+        </div>
+
+        <div className="composer">
+          <div className="composer-suggest">
+            {SUGGESTIONS.map((s) => (
+              <button key={s} className="chip" disabled={busy} onClick={() => send(s)}>{s}</button>
+            ))}
+          </div>
+          <div className="composer-row">
+            <textarea
+              ref={taRef}
+              rows={1}
+              value={input}
+              placeholder="Ask the agent to edit the CV…"
+              onChange={(e) => { setInput(e.target.value); autosize(); }}
+              onKeyDown={onKeyDown}
+            />
+            <button className="btn-send" disabled={busy || !input.trim()} onClick={() => send()} title="Send">
+              {Icon.send()}
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* RIGHT — preview canvas */}
+      <CanvasPane data={data} flash={flash} />
+    </div>
+  );
+}
+
+function CanvasPane({ data, flash }) {
+  const scrollRef = useRef(null);
+  const scaleRef = useRef(null);
+  const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = scrollRef.current;
+      if (!el) return;
+      const avail = el.clientWidth - 64; // horizontal padding
+      const z = Math.min(1, Math.max(0.4, avail / 794));
+      setZoom(z);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (scrollRef.current) ro.observe(scrollRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <main className="canvas">
+      <div className="canvas-bar">
+        <span className="canvas-bar-label">Preview · A4</span>
+        <div className="canvas-zoom">
+          <span className="canvas-saved"><span className="dot" /> Synced</span>
+          <span>{Math.round(zoom * 100)}%</span>
+        </div>
+      </div>
+      <div className="canvas-scroll" ref={scrollRef}>
+        <div
+          className="sheet-scale"
+          ref={scaleRef}
+          style={{ transform: `scale(${zoom})`, height: 1123 * zoom }}
+        >
+          <div className={"sheet-wrap" + (flash ? " is-updating" : "")}>
+            <ResumeA data={data} />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+Object.assign(window, { Studio });

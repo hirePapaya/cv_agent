@@ -1,0 +1,326 @@
+/* ============================================================
+   Lirflow Design System — colors & type tokens
+   Extracted from src/styles/theme.css, src/styles/fonts.css,
+   and the landing component files (theme constants like
+   FOREST = "#0D1F08", CREAM = "#F7F4EB", NAV_BAR_BG = "#283618",
+   NAV_BRAND_GREEN = "#283618", MUTED = "#E8E4DC", accent #DBFFA5).
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+/* Vollkorn — brand editorial serif (user-uploaded, replaces Funnel Sans) */
+@font-face {
+  font-family: "Vollkorn";
+  src: url("fonts/Vollkorn-VariableFont_wght.ttf") format("truetype-variations"),
+       url("fonts/Vollkorn-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Vollkorn";
+  src: url("fonts/Vollkorn-Italic-VariableFont_wght.ttf") format("truetype-variations"),
+       url("fonts/Vollkorn-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* -------- Brand color palette -------- */
+  /* Deep editorial green — hero backgrounds, full-bleed sections, mood */
+  --lf-forest: #0d1f08;
+  /* Slightly warmer green — navbar, CTA capsules, flow/clients title color */
+  --lf-brand-green: #283618;
+  /* Primary accent — the one and only pop of color; shows through logo mark */
+  --lf-lime: #dbffa5;
+  /* Warm cream — the default content surface (most sections sit on this) */
+  --lf-cream: #f7f4eb;
+  /* Muted stone — newsletter band; quieter than cream, less saturated */
+  --lf-muted-stone: #e8e4dc;
+  /* About-page surface — oatmeal grey */
+  --lf-oatmeal: #d4cfc8;
+  /* Near-black brand ink — text, borders, logo square */
+  --lf-ink: #1a1615;
+  /* Pure black — used directly in borders, captions, navbar logo square */
+  --lf-black: #000000;
+  /* Near-white link color used on dark navbar */
+  --lf-link: #f2f2f2;
+  /* Signal red for destructive (from theme.css) */
+  --lf-destructive: #d4183d;
+
+  /* -------- Semantic surfaces -------- */
+  --lf-bg: var(--lf-cream);
+  --lf-bg-dark: var(--lf-forest);
+  --lf-bg-nav: var(--lf-brand-green);
+  --lf-bg-muted: var(--lf-muted-stone);
+  --lf-bg-card: #ffffff;
+
+  /* -------- Text colors -------- */
+  --lf-fg: var(--lf-ink);            /* 1A1615 — headlines, body default */
+  --lf-fg-dark: var(--lf-ink);
+  --lf-fg-on-dark: #ffffff;          /* pure white on forest green */
+  --lf-fg-muted: rgba(26, 22, 21, 0.55); /* body-copy alt, subheads on cream */
+  --lf-fg-soft: rgba(26, 22, 21, 0.65);  /* clients outro, flow subtitle */
+  --lf-fg-faint: rgba(26, 22, 21, 0.35); /* placeholder text, tertiary */
+  --lf-fg-on-dark-muted: rgba(255, 255, 255, 0.9);
+  --lf-fg-on-dark-faint: rgba(242, 242, 242, 0.45); /* inactive EN/PT */
+
+  /* -------- Borders -------- */
+  --lf-border: rgba(0, 0, 0, 0.1);      /* hairlines on cream */
+  --lf-border-strong: var(--lf-black);  /* full-strength divider (capabilities) */
+  --lf-border-on-dark: rgba(255, 255, 255, 0.5);
+  --lf-border-input: rgba(0, 0, 0, 0.15);
+  --lf-ring: rgba(0, 0, 0, 0.2);
+
+  /* -------- Font families -------- */
+  /* Primary workhorse: Inter (used EVERYWHERE in landing). Tight negative
+     tracking is a Lirflow signature — apply --lf-tracking-tight on headlines. */
+  --lf-font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Editorial counterpart: Vollkorn (serif), used on About page title + team names */
+  --lf-font-display: "Vollkorn", Georgia, "Times New Roman", serif;
+  --lf-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* -------- Type weights -------- */
+  --lf-weight-extralight: 200;  /* big step numerals "1." "2." on capabilities */
+  --lf-weight-light: 300;
+  --lf-weight-normal: 400;      /* most headlines (!) Lirflow sets H1/H2 to 400 */
+  --lf-weight-medium: 500;      /* h1-h4 in theme, body emphasis */
+  --lf-weight-semibold: 600;    /* wordmark "LIR FLOW" */
+  --lf-weight-bold: 700;
+
+  /* -------- Tracking (letter-spacing) -------- */
+  /* Lirflow uses aggressive negative tracking — it's a key brand signature. */
+  --lf-tracking-display: -0.05em;  /* major headlines (hero, section titles) */
+  --lf-tracking-tight: -0.04em;    /* value-card titles, footer wordmark */
+  --lf-tracking-snug: -0.03em;     /* card titles, wordmark, newsletter title */
+  --lf-tracking-body: -0.02em;     /* body, subheads, nav, buttons */
+  --lf-tracking-extra-tight: -0.06em; /* capabilities "No risk." headline */
+  --lf-tracking-uppercase: 0.06em;  /* uppercase labels on About "FOUNDER & CEO" */
+
+  /* -------- Line-height -------- */
+  --lf-lh-display: 1.09;  /* hero/section headlines — very tight */
+  --lf-lh-tight: 1.1;
+  --lf-lh-snug: 1.35;     /* body copy */
+  --lf-lh-body: 1.5;      /* default theme */
+  --lf-lh-relaxed: 1.7;
+  --lf-lh-loose: 1.8;     /* about page intro */
+
+  /* -------- Type scale (extracted from component sources) -------- */
+  --lf-text-xs: 13px;     /* nav links, status msgs */
+  --lf-text-sm: 14px;     /* footer links, contact info */
+  --lf-text-base: 15px;   /* buttons, inputs */
+  --lf-text-md: 16px;
+  --lf-text-lg: 18px;     /* body copy in sections, flow subtitle */
+  --lf-text-xl: 22px;     /* brand lockup small */
+  --lf-text-2xl: 26px;
+  --lf-text-3xl: 32px;    /* section headlines (mobile) */
+  --lf-text-4xl: 40px;    /* value-card titles (desktop) */
+  --lf-text-5xl: 60px;    /* "What We Offer" label */
+  --lf-text-hero: clamp(1.75rem, 4vw, 2rem); /* hero h1 responsive */
+  --lf-text-numeral-huge: clamp(4rem, 16vw, 11rem); /* step 1. 2. 3. */
+
+  /* -------- Spacing (matches Tailwind scale used in code) -------- */
+  --lf-space-1: 4px;
+  --lf-space-2: 8px;
+  --lf-space-3: 12px;
+  --lf-space-4: 16px;
+  --lf-space-5: 20px;
+  --lf-space-6: 24px;
+  --lf-space-8: 32px;
+  --lf-space-10: 40px;
+  --lf-space-12: 48px;
+  --lf-space-14: 56px;
+  --lf-space-16: 64px;
+  --lf-space-20: 80px;
+  --lf-space-24: 96px;
+  --lf-space-32: 128px;
+
+  /* Section vertical rhythm (common values from code) */
+  --lf-section-y-sm: 48px;
+  --lf-section-y: 96px;       /* py-16 md:py-24 */
+  --lf-section-y-lg: 120px;   /* md:py-[120px] */
+  --lf-section-y-xl: 135px;   /* landing value cards */
+
+  /* -------- Container widths (from source) -------- */
+  --lf-container-narrow: 738px;   /* clients carousel + outros */
+  --lf-container-mid: 942px;      /* value cards container */
+  --lf-container-wide: 1180px;    /* capabilities / why section */
+  --lf-container-max: 1280px;     /* default page max */
+
+  /* -------- Radii (Tailwind "rounded" defaults + explicit Figma pairs) -------- */
+  --lf-radius-sm: 2px;
+  --lf-radius: 4px;              /* buttons + image cards — tight & subtle */
+  --lf-radius-md: 8px;
+  --lf-radius-lg: 10px;           /* theme.css --radius: 0.625rem */
+  --lf-radius-xl: 16px;           /* CEO photo, capabilities risk-free card (rounded-2xl) */
+  --lf-radius-2xl: 20px;
+  --lf-radius-full: 9999px;       /* circle CTAs, pill buttons */
+
+  /* -------- Shadows -------- */
+  --lf-shadow-none: none;
+  --lf-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --lf-shadow-card: 0 4px 8px rgba(0, 0, 0, 0.02), 0 6px 12px rgba(0, 0, 0, 0.03);
+  --lf-shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* -------- Motion (Lirflow's signature ease-out cubic) -------- */
+  --lf-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --lf-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --lf-duration-fast: 200ms;
+  --lf-duration: 600ms;
+  --lf-duration-slow: 850ms;
+}
+
+/* ============================================================
+   Semantic element styles — opt in by attaching .lf-root to a
+   container (body is fine). Do NOT globally clobber h1/h2 etc
+   so this file is safe to drop into a project without fighting
+   Tailwind base styles.
+   ============================================================ */
+.lf-root {
+  font-family: var(--lf-font-sans);
+  color: var(--lf-fg);
+  background-color: var(--lf-bg);
+  font-size: var(--lf-text-md);
+  line-height: var(--lf-lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ----- Display / editorial ----- */
+.lf-display {
+  font-family: var(--lf-font-display);
+  font-weight: var(--lf-weight-medium);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ----- Headlines ----- */
+.lf-h-hero {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-medium);
+  font-size: var(--lf-text-hero);
+  letter-spacing: var(--lf-tracking-display);
+  line-height: var(--lf-lh-display);
+}
+.lf-h1 {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-normal); /* Lirflow H1s are 400, NOT bold */
+  font-size: var(--lf-text-3xl);
+  letter-spacing: var(--lf-tracking-display);
+  line-height: var(--lf-lh-display);
+}
+.lf-h2 {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-normal);
+  font-size: var(--lf-text-3xl);
+  letter-spacing: var(--lf-tracking-display);
+  line-height: var(--lf-lh-display);
+}
+.lf-h3 {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-medium);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  letter-spacing: var(--lf-tracking-tight);
+  line-height: 1.05;
+}
+.lf-h4 {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-medium);
+  font-size: var(--lf-text-lg);
+  letter-spacing: var(--lf-tracking-body);
+  line-height: var(--lf-lh-snug);
+}
+
+/* ----- Body ----- */
+.lf-body {
+  font-family: var(--lf-font-sans);
+  font-size: var(--lf-text-lg);
+  line-height: var(--lf-lh-snug);
+  letter-spacing: var(--lf-tracking-body);
+  color: var(--lf-fg-muted);
+}
+.lf-body-soft {
+  composes: lf-body;
+  color: var(--lf-fg-soft);
+}
+.lf-small {
+  font-size: var(--lf-text-sm);
+  line-height: 1.4;
+  color: var(--lf-fg);
+}
+.lf-caption {
+  font-size: var(--lf-text-xs);
+  line-height: 1.4;
+  color: var(--lf-fg-muted);
+}
+
+/* ----- Brand wordmark ----- */
+.lf-wordmark {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-semibold);
+  letter-spacing: var(--lf-tracking-snug);
+  color: var(--lf-ink);
+  text-transform: uppercase;
+  font-size: var(--lf-text-base);
+}
+
+/* ----- Eyebrow / small uppercase ----- */
+.lf-eyebrow {
+  font-family: var(--lf-font-sans);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: var(--lf-tracking-uppercase);
+  color: var(--lf-fg-muted);
+}
+
+/* ----- Huge numeric markers (capabilities steps) ----- */
+.lf-numeral {
+  font-family: var(--lf-font-sans);
+  font-weight: var(--lf-weight-extralight);
+  font-size: var(--lf-text-numeral-huge);
+  letter-spacing: var(--lf-tracking-display);
+  line-height: var(--lf-lh-display);
+  color: var(--lf-ink);
+}
+
+/* ----- Buttons (baseline) ----- */
+.lf-btn {
+  font-family: var(--lf-font-sans);
+  font-size: var(--lf-text-base);
+  font-weight: var(--lf-weight-normal);
+  letter-spacing: var(--lf-tracking-body);
+  line-height: 1;
+  border-radius: var(--lf-radius);
+  padding: 12px 16px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: var(--lf-ink);
+  transition: opacity var(--lf-duration-fast) var(--lf-ease-out);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lf-btn:hover { opacity: 0.75; }
+
+.lf-btn-primary {
+  background: var(--lf-brand-green);
+  color: var(--lf-fg-on-dark);
+  border-color: transparent;
+  border-radius: var(--lf-radius-full);
+  padding: 12px 24px;
+}
+.lf-btn-primary:hover { opacity: 0.9; }
+
+.lf-btn-solid-dark {
+  background: var(--lf-black);
+  color: #fff;
+  border-color: var(--lf-black);
+}
+
+.lf-btn-pill-lg {
+  border-radius: var(--lf-radius-full);
+  padding: 18px 24px;
+  font-size: var(--lf-text-lg);
+}

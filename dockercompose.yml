@@ -4,7 +4,19 @@ services:
   cv-coach:
     build:
       context: ./cv-coach
-    stdin_open: true
-    tty: true
+    command: uv run uvicorn server:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
     environment:
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
+  fe:
+    image: python:3.13-slim
+    working_dir: /app
+    volumes:
+      - ./fe:/app
+    command: python3 -m http.server 5500
+    ports:
+      - "5500:5500"
+    depends_on:
+      - cv-coach

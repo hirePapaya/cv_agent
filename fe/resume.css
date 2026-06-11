@@ -1,0 +1,178 @@
+/* Rafael Campo CV — layout styles (shared by canvas + print) */
+
+/* ============ A4 page frame ============ */
+.cv {
+  width: 794px;
+  min-height: 1123px;
+  box-sizing: border-box;
+  background: var(--lf-cream);
+  color: var(--lf-ink);
+  font-family: var(--lf-font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+/* ============ shared type ============ */
+.cv-name {
+  font-family: var(--lf-font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.0;
+  margin: 0;
+  color: var(--lf-ink);
+}
+.cv-title {
+  margin: 10px 0 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--lf-fg-muted);
+  font-weight: 500;
+}
+.cv-section-title {
+  font-family: var(--lf-font-display);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  color: var(--lf-ink);
+  margin: 0 0 9px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--lf-border);
+}
+.cv-block { margin-top: 16px; }
+
+.cv-summary {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: rgba(26, 22, 21, 0.78);
+  text-wrap: pretty;
+}
+
+/* contact inline (Variation A) */
+.cv-contact-inline {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  letter-spacing: -0.01em;
+}
+.cv-contact-inline a { color: var(--lf-ink); text-decoration: none; }
+.cv-contact-inline a:hover { opacity: 0.7; }
+.cv-contact-item { display: inline-flex; align-items: center; gap: 9px; }
+.cv-dot { color: var(--lf-fg-faint); }
+
+/* experience */
+.cv-job { margin-bottom: 11px; }
+.cv-job--compact { margin-bottom: 11px; }
+.cv-job:last-child { margin-bottom: 0; }
+.cv-job-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.cv-job-co { font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em; }
+.cv-job-dates {
+  font-size: 11px;
+  color: var(--lf-fg-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+.cv-job-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 2px;
+}
+.cv-job-role { font-size: 12px; color: rgba(26,22,21,0.72); letter-spacing: -0.01em; }
+.cv-job-loc { font-size: 11px; color: var(--lf-fg-muted); white-space: nowrap; }
+
+.cv-bullets { list-style: none; margin: 7px 0 0; padding: 0; }
+.cv-bullets li {
+  position: relative;
+  padding-left: 15px;
+  font-size: 11.75px;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: rgba(26, 22, 21, 0.8);
+  margin-bottom: 2.5px;
+  text-wrap: pretty;
+}
+.cv-bullets li:last-child { margin-bottom: 0; }
+.cv-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 7px;
+  width: 5px;
+  height: 1px;
+  background: var(--lf-brand-green);
+}
+
+/* skills */
+.cv-skills { margin: 0; }
+.cv-skill-row { margin-bottom: 8px; }
+.cv-skill-row:last-child { margin-bottom: 0; }
+.cv-skill-row dt {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--lf-ink);
+  margin-bottom: 1px;
+}
+.cv-skill-row dd {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--lf-fg-muted);
+  letter-spacing: -0.005em;
+}
+
+/* education */
+.cv-edu { margin-bottom: 0; }
+
+/* ============ Variation A ============ */
+.cv-a { padding: 34px 56px; }
+.cv-a-header { padding-bottom: 18px; border-bottom: 1px solid var(--lf-border); }
+.cv-a .cv-name { font-size: 31px; }
+.cv-a-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: 40px;
+}
+.cv-a-grid .cv-block { margin-top: 0; }
+
+/* ============ Variation B ============ */
+.cv-b { display: flex; padding: 42px 44px; gap: 0; }
+.cv-b-rail {
+  width: 252px;
+  flex: none;
+  padding-right: 28px;
+  border-right: 1px solid var(--lf-border);
+}
+.cv-b-main { flex: 1; padding-left: 30px; min-width: 0; }
+.cv-b .cv-name { font-size: 26px; line-height: 1.04; }
+.cv-b-namewrap { padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--lf-border); }
+.cv-rail-block { margin-bottom: 20px; }
+.cv-rail-block:last-child { margin-bottom: 0; }
+.cv-b .cv-block:first-child { margin-top: 0; }
+
+.cv-contact-stack { list-style: none; margin: 0; padding: 0; }
+.cv-contact-stack li { margin-bottom: 5px; font-size: 11.5px; letter-spacing: -0.01em; word-break: break-word; }
+.cv-contact-stack li:last-child { margin-bottom: 0; }
+.cv-contact-stack a { color: var(--lf-ink); text-decoration: none; }
+.cv-contact-stack a:hover { opacity: 0.7; }
+
+.cv-skills--stack .cv-skill-row { margin-bottom: 10px; }
+
+.cv-edu-school { font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em; }
+.cv-edu-degree { font-size: 11.5px; color: rgba(26,22,21,0.72); margin-top: 1px; letter-spacing: -0.005em; }
+.cv-edu-meta { font-size: 11px; color: var(--lf-fg-muted); margin-top: 2px; }
