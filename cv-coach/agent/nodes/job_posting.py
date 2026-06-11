@@ -49,6 +49,7 @@ def job_posting_node(state: CVAgentState) -> CVAgentState:
     job_posting = parse_job_posting(raw)
     return {
         **state,
-        "job_posting": job_posting.model_dump(),  # dict for safe checkpointing
+        "job_posting": job_posting.model_dump(), 
         "target_role": job_posting.title,
     }
+

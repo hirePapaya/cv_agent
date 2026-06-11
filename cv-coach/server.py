@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
-from agent.graph import cv_editor_agent
+from agent.graph import agent, chat_agent
 
 app = FastAPI(title="CV Studio Agent API")
 
@@ -16,6 +16,11 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+WELCOME_MESSAGE = (
+    "Hi! I'm your CV Coach. Let's work together to make your résumé shine. "
+    "To get started, paste the job posting you're targeting."
 )
 
 
@@ -36,31 +41,37 @@ class EditCvResponse(BaseModel):
     ops: list[dict]
 
 
-@app.post("/edit-cv", response_model=EditCvResponse)
-def edit_cv(request: EditCvRequest) -> EditCvResponse:
-    result = cv_editor_agent.invoke({
-        "cv": request.cv,
-        "history": [turn.model_dump() for turn in request.history],
-        "instruction": request.instruction,
-        "reply": "",
-        "log": [],
-        "ops": [],
-    })
-    return EditCvResponse(reply=result["reply"], log=result["log"], ops=result["ops"])
-
-
 @app.websocket("/ws/edit-cv")
 async def edit_cv_ws(websocket: WebSocket) -> None:
     await websocket.accept()
+    await websocket.send_json({"reply": WELCOME_MESSAGE, "log": [], "ops": []})
+
+    job_posting: dict | None = None
     try:
         while True:
             payload = await websocket.receive_json()
+            instruction = payload.get("instruction", "")
+
+            if job_posting is None:
+                result = await run_in_threadpool(agent.invoke, {"job_description": instruction})
+                job_posting = result.get("job_posting") or {}
+                title = job_posting.get("title") or "this role"
+                company = job_posting.get("company")
+                where = f" at {company}" if company else ""
+                await websocket.send_json({
+                    "reply": f"Got it — I'll tailor your CV for {title}{where}. Tell me what to edit.",
+                    "log": ["Parsed the job posting."],
+                    "ops": [],
+                })
+                continue
+
             result = await run_in_threadpool(
-                cv_editor_agent.invoke,
+                chat_agent.invoke,
                 {
                     "cv": payload.get("cv", {}),
                     "history": payload.get("history", []),
-                    "instruction": payload.get("instruction", ""),
+                    "instruction": instruction,
+                    "job_posting": job_posting,
                     "reply": "",
                     "log": [],
                     "ops": [],

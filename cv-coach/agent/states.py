@@ -35,13 +35,12 @@ class CVAgentState(TypedDict):
 
 
 
-
-
-class CVEditState(TypedDict):
-    """State for the CV Studio editing agent."""
-    cv: dict                   # current CV JSON (matches the CV Studio data shape)
+class ChatState(TypedDict):
+    """State for the chat with the user, focused on a single instruction and its resulting edit operations."""
+    message: str               # the user's latest message (instruction or answer)
     history: list[dict]        # recent chat turns: {"role": "user" | "agent", "text": str}
     instruction: str           # the user's latest editing instruction
+    job_posting: dict | None   # parsed job posting to tailor edits toward, if any
     reply: str                 # short conversational reply to show the user
     log: list[str]             # past-tense, concrete change notes
     ops: list[dict]            # edit operations to apply to the CV

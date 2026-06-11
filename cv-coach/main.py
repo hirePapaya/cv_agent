@@ -2,8 +2,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agent.graph import agent
-from agent.states import CVAgentState
+from agent.graph import chat_agent
+from agent.states import ChatState
 
 
 def main() -> None:
@@ -20,8 +20,8 @@ def main() -> None:
         if not message:
             continue
 
-        result = agent.invoke(CVAgentState(job_description=message))
-        print(result["job_posting"])
+        result = chat_agent.invoke(ChatState(message=message))
+        print(result["reply"])
 
 
 if __name__ == "__main__":

@@ -11,11 +11,11 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
 
   fe:
-    image: python:3.13-slim
+    image: node:20-alpine
     working_dir: /app
     volumes:
       - ./fe:/app
-    command: python3 -m http.server 5500
+    command: npx --yes serve -l 5500
     ports:
       - "5500:5500"
     depends_on:

@@ -131,7 +131,6 @@ function Studio() {
       { time: nowStamp(), text: "Loaded Rafael Campo — CV" },
       { time: nowStamp(), text: "Layout: single-column editorial · A4" },
     ] },
-    { id: 2, type: "agent", text: "I'm your CV editor. Tell me what to sharpen — tighten the summary, rework bullets, reorder sections — and I'll edit the page live. Export to PDF anytime." },
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -140,7 +139,7 @@ function Studio() {
 
   const threadRef = useRef(null);
   const taRef = useRef(null);
-  const idRef = useRef(3);
+  const idRef = useRef(2);
   const wsRef = useRef(null);
   const pendingRef = useRef(null);
   const nextId = () => idRef.current++;
@@ -160,14 +159,34 @@ function Studio() {
 
       socket.onopen = () => { if (!cancelled) setConnected(true); };
       socket.onmessage = (event) => {
-        const resolvePending = pendingRef.current;
-        if (!resolvePending) return;
-        pendingRef.current = null;
+        let parsed;
         try {
-          resolvePending(JSON.parse(event.data));
+          parsed = JSON.parse(event.data);
         } catch (e) {
-          resolvePending(null);
+          parsed = null;
         }
+
+        const resolvePending = pendingRef.current;
+        if (resolvePending) {
+          pendingRef.current = null;
+          resolvePending(parsed);
+          return;
+        }
+
+        // unsolicited message from the agent (e.g. the welcome on connect)
+        if (!parsed) return;
+        if (Array.isArray(parsed.ops) && parsed.ops.length) {
+          setData((prev) => applyOps(prev, parsed.ops).cv);
+        }
+        const logLines = (Array.isArray(parsed.log) ? parsed.log : [])
+          .filter(Boolean)
+          .map((t) => ({ time: nowStamp(), text: String(t) }));
+        setMessages((m) => {
+          const updated = [...m];
+          if (logLines.length) updated.push({ id: idRef.current++, type: "log", lines: logLines });
+          if (parsed.reply) updated.push({ id: idRef.current++, type: "agent", text: String(parsed.reply) });
+          return updated;
+        });
       };
       socket.onclose = () => {
         if (cancelled) return;
