@@ -2,11 +2,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
+from agent.cv_data import load_cv_studio_data
 from agent.graph import agent, chat_agent
 
 app = FastAPI(title="CV Studio Agent API")
@@ -39,6 +40,14 @@ class EditCvResponse(BaseModel):
     reply: str
     log: list[str]
     ops: list[dict]
+
+
+@app.get("/cv")
+def get_cv() -> dict:
+    try:
+        return load_cv_studio_data()
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="CV data not found")
 
 
 @app.websocket("/ws/edit-cv")

@@ -123,15 +123,21 @@ const SUGGESTIONS = [
   "Add a one-line headline",
 ];
 
+// placeholder shown while the real CV loads from the agent backend
+const DEFAULT_CV = {
+  name: "",
+  title: "",
+  summary: "",
+  contact: [],
+  experience: [],
+  education: [],
+  skills: [],
+};
+
 // ---------- main app ----------
 function Studio() {
-  const [data, setData] = useState(() => JSON.parse(JSON.stringify(window.RESUME)));
-  const [messages, setMessages] = useState(() => [
-    { id: 1, type: "log", lines: [
-      { time: nowStamp(), text: "Loaded Rafael Campo — CV" },
-      { time: nowStamp(), text: "Layout: single-column editorial · A4" },
-    ] },
-  ]);
+  const [data, setData] = useState(DEFAULT_CV);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [flash, setFlash] = useState(false);
@@ -139,13 +145,38 @@ function Studio() {
 
   const threadRef = useRef(null);
   const taRef = useRef(null);
-  const idRef = useRef(2);
+  const idRef = useRef(1);
   const wsRef = useRef(null);
   const pendingRef = useRef(null);
   const nextId = () => idRef.current++;
 
   // keep window.RESUME synced so print + any other refs match live state
   useEffect(() => { window.RESUME = data; }, [data]);
+
+  // load the real CV from the agent backend, replacing the defaults
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/cv`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`request failed: ${res.status}`);
+        return res.json();
+      })
+      .then((cv) => {
+        if (cancelled) return;
+        setData(cv);
+        setMessages((m) => [...m, { id: nextId(), type: "log", lines: [
+          { time: nowStamp(), text: `Loaded ${cv.name} — CV` },
+          { time: nowStamp(), text: "Layout: single-column editorial · A4" },
+        ] }]);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setMessages((m) => [...m, { id: nextId(), type: "log", lines: [
+          { time: nowStamp(), text: "Could not load the CV from the agent.", error: true },
+        ] }]);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   // open a persistent websocket to the agent, reconnecting on drop
   useEffect(() => {
