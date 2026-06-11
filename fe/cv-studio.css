@@ -56,6 +56,26 @@ body {
   margin: 3px 0 0;
 }
 
+.chat-status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lf-fg-on-dark-faint);
+}
+.chat-status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--lf-fg-on-dark-faint);
+  display: inline-block;
+}
+.chat-status.is-connected { color: var(--lf-fg-on-dark-faint); }
+.chat-status.is-connected .dot { background: var(--lf-lime); }
+
 .btn-export {
   flex: none;
   display: inline-flex;

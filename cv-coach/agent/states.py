@@ -34,6 +34,9 @@ class CVAgentState(TypedDict):
     final_cv: str | None
 
 
+
+
+
 class CVEditState(TypedDict):
     """State for the CV Studio editing agent."""
     cv: dict                   # current CV JSON (matches the CV Studio data shape)

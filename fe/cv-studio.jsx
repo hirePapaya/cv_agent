@@ -298,6 +298,9 @@ function Studio() {
               <p className="chat-sub">Rafael Campo</p>
             </div>
           </div>
+          <span className={"chat-status" + (connected ? " is-connected" : "")} title={connected ? "Connected to agent" : "Connecting to agent…"}>
+            <span className="dot" /> {connected ? "Connected" : "Connecting…"}
+          </span>
           <button className="btn-export" onClick={() => window.print()} title="Export the CV as a PDF">
             {Icon.download()} Export PDF
           </button>
