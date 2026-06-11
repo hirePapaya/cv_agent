@@ -2,6 +2,9 @@
 const { useState, useRef, useEffect, useCallback } = React;
 
 const API_BASE = window.CV_STUDIO_API_BASE || "http://localhost:8000";
+const WS_URL = (window.CV_STUDIO_WS_BASE || API_BASE.replace(/^http/, "ws")) + "/ws/edit-cv";
+const WS_RECONNECT_DELAY = 2000;
+const WS_RESPONSE_TIMEOUT = 30000;
 
 // ---------- tiny inline icons (Lucide-style, 1.5px) ----------
 const Icon = {
@@ -133,14 +136,58 @@ function Studio() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   const threadRef = useRef(null);
   const taRef = useRef(null);
   const idRef = useRef(3);
+  const wsRef = useRef(null);
+  const pendingRef = useRef(null);
   const nextId = () => idRef.current++;
 
   // keep window.RESUME synced so print + any other refs match live state
   useEffect(() => { window.RESUME = data; }, [data]);
+
+  // open a persistent websocket to the agent, reconnecting on drop
+  useEffect(() => {
+    let cancelled = false;
+    let socket;
+    let reconnectTimer;
+
+    const connect = () => {
+      socket = new WebSocket(WS_URL);
+      wsRef.current = socket;
+
+      socket.onopen = () => { if (!cancelled) setConnected(true); };
+      socket.onmessage = (event) => {
+        const resolvePending = pendingRef.current;
+        if (!resolvePending) return;
+        pendingRef.current = null;
+        try {
+          resolvePending(JSON.parse(event.data));
+        } catch (e) {
+          resolvePending(null);
+        }
+      };
+      socket.onclose = () => {
+        if (cancelled) return;
+        setConnected(false);
+        if (pendingRef.current) {
+          pendingRef.current(null);
+          pendingRef.current = null;
+        }
+        reconnectTimer = setTimeout(connect, WS_RECONNECT_DELAY);
+      };
+      socket.onerror = () => socket.close();
+    };
+
+    connect();
+    return () => {
+      cancelled = true;
+      clearTimeout(reconnectTimer);
+      if (wsRef.current) wsRef.current.close();
+    };
+  }, []);
 
   useEffect(() => {
     const el = threadRef.current;
@@ -170,23 +217,31 @@ function Studio() {
     setBusy(true);
 
     let result = null, errored = false;
-    try {
-      const res = await fetch(`${API_BASE}/edit-cv`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cv: data,
-          history: history
-            .filter((m) => m.type === "user" || m.type === "agent")
-            .slice(-6)
-            .map((m) => ({ role: m.type, text: m.text })),
-          instruction,
-        }),
-      });
-      if (!res.ok) throw new Error(`request failed: ${res.status}`);
-      result = await res.json();
-    } catch (e) {
+    const socket = wsRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
       errored = true;
+    } else {
+      try {
+        result = await new Promise((resolve, reject) => {
+          pendingRef.current = resolve;
+          socket.send(JSON.stringify({
+            cv: data,
+            history: history
+              .filter((m) => m.type === "user" || m.type === "agent")
+              .slice(-6)
+              .map((m) => ({ role: m.type, text: m.text })),
+            instruction,
+          }));
+          setTimeout(() => {
+            if (pendingRef.current === resolve) {
+              pendingRef.current = null;
+              reject(new Error("timeout"));
+            }
+          }, WS_RESPONSE_TIMEOUT);
+        });
+      } catch (e) {
+        errored = true;
+      }
     }
 
     setBusy(false);
