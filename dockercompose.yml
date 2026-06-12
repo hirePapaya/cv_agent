@@ -1,15 +1,6 @@
 name: cv-coach
 
 services:
-  cv-coach:
-    build:
-      context: ./cv-coach
-    command: uv run uvicorn server:app --host 0.0.0.0 --port 8000
-    ports:
-      - "8000:8000"
-    environment:
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-
   fe:
     image: node:20-alpine
     working_dir: /app
@@ -18,5 +9,3 @@ services:
     command: npx --yes serve -l 5500
     ports:
       - "5500:5500"
-    depends_on:
-      - cv-coach

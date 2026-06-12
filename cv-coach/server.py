@@ -58,22 +58,8 @@ async def edit_cv_ws(websocket: WebSocket) -> None:
     job_posting: dict | None = None
     try:
         while True:
-            payload = await websocket.receive_json()
+            payload = await websocket.receive_json() 
             instruction = payload.get("instruction", "")
-
-            if job_posting is None:
-                result = await run_in_threadpool(agent.invoke, {"job_description": instruction})
-                job_posting = result.get("job_posting") or {}
-                title = job_posting.get("title") or "this role"
-                company = job_posting.get("company")
-                where = f" at {company}" if company else ""
-                await websocket.send_json({
-                    "reply": f"Got it — I'll tailor your CV for {title}{where}. Tell me what to edit.",
-                    "log": ["Parsed the job posting."],
-                    "ops": [],
-                })
-                continue
-
             result = await run_in_threadpool(
                 chat_agent.invoke,
                 {
@@ -86,6 +72,7 @@ async def edit_cv_ws(websocket: WebSocket) -> None:
                     "ops": [],
                 },
             )
+            job_posting = result.get("job_posting")
             await websocket.send_json({
                 "reply": result["reply"],
                 "log": result["log"],

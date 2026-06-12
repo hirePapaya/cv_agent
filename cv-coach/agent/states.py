@@ -40,7 +40,8 @@ class ChatState(TypedDict):
     message: str               # the user's latest message (instruction or answer)
     history: list[dict]        # recent chat turns: {"role": "user" | "agent", "text": str}
     instruction: str           # the user's latest editing instruction
-    job_posting: dict | None   # parsed job posting to tailor edits toward, if any
+    job_posting: dict | None   # job posting info gathered from the chat so far
+    ready: bool                # true once job_posting has enough info to run the CV enhancement
     reply: str                 # short conversational reply to show the user
     log: list[str]             # past-tense, concrete change notes
     ops: list[dict]            # edit operations to apply to the CV

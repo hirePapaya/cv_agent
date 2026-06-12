@@ -10,11 +10,15 @@ serve:
 fe:
     cd fe && python3 -m http.server 5500
 
-# Build and run the full stack via docker compose, then open the FE
+# Run the dockerized FE, streaming its logs to the terminal
+up-docker:
+    docker compose -f dockercompose.yml up --build
+
+# Run the FE in docker (detached) and the agent API locally with hot-reload, logs in the terminal
 up-all:
     docker compose -f dockercompose.yml up --build -d
     xdg-open http://localhost:5500
-    docker compose -f dockercompose.yml logs -f
+    just serve
 
 # Install/sync project dependencies
 sync:

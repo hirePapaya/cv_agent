@@ -5,11 +5,25 @@ from datetime import date
 
 class JobPosting(BaseModel):
     title: str
-    company: str
+    company: str | None = None
     location: str | None = None
     description: str
     requirements: list[str] = []
+    nice_to_have: list[str] = []
     keywords: list[str] = []
+
+
+class JobPostingDraft(BaseModel):
+    """Incremental job posting info gathered from the chat, plus the agent's reply."""
+    title: str | None = None
+    company: str | None = None
+    location: str | None = None
+    description: str | None = None
+    requirements: list[str] = []
+    nice_to_have: list[str] = []
+    keywords: list[str] = []
+    ready: bool  # true once title + description are enough to start tailoring the CV
+    reply: str   # follow-up question, or a short confirmation once ready
 
 
 ## Curriculum Vitae schema
