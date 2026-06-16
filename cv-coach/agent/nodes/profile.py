@@ -67,7 +67,4 @@ def profile_node(state: CVAgentState) -> CVAgentState:
     update_cv_section(updated_profile)
 
     logger.info("profile_node: done")
-    return {
-        **state,
-        "current_section": "profile",
-    }
+    return {}
