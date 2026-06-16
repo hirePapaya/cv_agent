@@ -1,13 +1,19 @@
+import logging
+
 from langgraph.graph import StateGraph, END
 
 from .states import CVAgentState, ChatState
-from .nodes import chat_node, close_chat_node, job_posting_node, run_enhance_node
+from .nodes import chat_node, close_chat_node, job_posting_node, profile_node, run_enhance_node
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+logger = logging.getLogger(__name__)
 
 cv_enhance_graph = StateGraph(state_schema=CVAgentState)
 cv_enhance_graph.set_entry_point("job_posting")
 cv_enhance_graph.add_node("job_posting", job_posting_node)
-cv_enhance_graph.set_finish_point("job_posting")
+cv_enhance_graph.add_node("profile", profile_node)
+cv_enhance_graph.add_edge("job_posting", "profile")
+cv_enhance_graph.set_finish_point("profile")
 agent = cv_enhance_graph.compile()
 
 
