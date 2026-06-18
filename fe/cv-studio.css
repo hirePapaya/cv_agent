@@ -76,6 +76,41 @@ body {
 .chat-status.is-connected { color: var(--lf-fg-on-dark-faint); }
 .chat-status.is-connected .dot { background: var(--lf-lime); }
 
+.export-group {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.size-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--lf-radius-sm);
+  padding: 2px;
+  gap: 1px;
+}
+
+.size-btn {
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--lf-radius-sm) - 2px);
+  color: var(--lf-fg-on-dark-faint);
+  font-family: var(--lf-font-sans);
+  font-size: 11px;
+  font-weight: var(--lf-weight-medium);
+  letter-spacing: 0.04em;
+  padding: 4px 9px;
+  cursor: pointer;
+  transition: background var(--lf-duration-fast) var(--lf-ease-out),
+              color    var(--lf-duration-fast) var(--lf-ease-out);
+}
+.size-btn.is-active {
+  background: var(--lf-cream);
+  color: var(--lf-ink);
+}
+.size-btn:not(.is-active):hover { color: var(--lf-fg-on-dark-muted); }
+
 .btn-export {
   flex: none;
   display: inline-flex;
@@ -321,15 +356,24 @@ body {
 
 /* ============ PRINT ============ */
 @media print {
-  @page { size: A4; margin: 0; }
+  /* @page size + zoom are both injected by JS before window.print() fires */
+  @page { margin: 0; }
   html, body { background: #fff; height: auto; }
   .chat, .canvas-bar { display: none !important; }
   .studio, .canvas { display: block; height: auto; overflow: visible; }
   .canvas-scroll { display: block; padding: 0; overflow: visible; }
-  .sheet-scale { transform: none !important; }
-  .sheet-wrap { width: auto; outline: none; }
+  .sheet-scale { transform: none !important; height: auto !important; }
+  /* center the sheet on the page after zoom may have made it narrower */
+  .sheet-wrap { margin: 0 auto; width: fit-content; outline: none; }
   .sheet-wrap .cv {
     box-shadow: none;
+    /* prevent ANY page break within the CV */
+    break-before: avoid;
+    break-after: avoid;
+    break-inside: avoid;
+    page-break-before: avoid;
+    page-break-after: avoid;
+    page-break-inside: avoid;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }

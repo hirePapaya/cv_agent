@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from google import genai
 from google.genai import types
@@ -32,6 +33,7 @@ def rewrite_profile(current_text: str, job_posting: dict) -> ProfileContent:
         "keywords": job_posting.get("keywords", []),
     })
 
+    t0 = time.perf_counter()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
@@ -41,30 +43,29 @@ def rewrite_profile(current_text: str, job_posting: dict) -> ProfileContent:
             response_mime_type="text/plain",
         ),
     )
+    elapsed = time.perf_counter() - t0
 
     rewritten = response.text.strip()
-    logger.debug("Rewritten profile summary (%d chars)", len(rewritten))
+    logger.debug(
+        "profile: LLM %.2fs — %d chars → %d chars",
+        elapsed, len(current_text), len(rewritten),
+    )
     return ProfileContent(text=rewritten)
 
 
-def profile_node(state: CVAgentState) -> CVAgentState:
+def profile_node(state: CVAgentState) -> dict:
     """LangGraph node: rewrites the profile summary and persists it to output.json."""
     job_posting = state.get("job_posting")
     if not job_posting:
         logger.warning("profile_node skipped — no job_posting in state")
-        return state
+        return {}
 
-    logger.info("profile_node: loading current CV profile")
+    t_node = time.perf_counter()
+    logger.info("profile_node: start — role=%r", job_posting.get("title", "unknown"))
+
     cv = load_cv()
-    logger.info(
-        "profile_node: rewriting profile for role '%s'",
-        job_posting.get("title", "unknown"),
-    )
-
     updated_profile = rewrite_profile(cv.profile.text, job_posting)
-
-    logger.info("profile_node: persisting updated profile to output.json")
     update_cv_section(updated_profile)
 
-    logger.info("profile_node: done")
+    logger.info("profile_node: done in %.2fs", time.perf_counter() - t_node)
     return {}

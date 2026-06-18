@@ -123,6 +123,11 @@ const SUGGESTIONS = [
   "Add a one-line headline",
 ];
 
+const PAGE_SIZES = {
+  a4:     { w: 794, h: 1123, label: "A4",     css: "A4" },
+  letter: { w: 794, h: 1056, label: "Letter", css: "Letter" },
+};
+
 // placeholder shown while the real CV loads from the agent backend
 const DEFAULT_CV = {
   name: "",
@@ -142,13 +147,29 @@ function Studio() {
   const [busy, setBusy] = useState(false);
   const [flash, setFlash] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [paperSize, setPaperSize] = useState("a4");
+
+  // Keep @page in sync so window.print() always uses the selected size
+  useEffect(() => {
+    let style = document.getElementById("__print-size");
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "__print-size";
+      document.head.appendChild(style);
+    }
+    style.textContent = `@media print { @page { size: ${PAGE_SIZES[paperSize].css}; margin: 0; } }`;
+  }, [paperSize]);
+
 
   const threadRef = useRef(null);
   const taRef = useRef(null);
   const idRef = useRef(1);
   const wsRef = useRef(null);
   const pendingRef = useRef(null);
+  const paperSizeRef = useRef(paperSize);
   const nextId = () => idRef.current++;
+
+  useEffect(() => { paperSizeRef.current = paperSize; }, [paperSize]);
 
   // keep window.RESUME synced so print + any other refs match live state
   useEffect(() => { window.RESUME = data; }, [data]);
@@ -329,6 +350,35 @@ function Studio() {
     });
   }, [input, busy, messages, data]);
 
+  const exportPdf = useCallback(() => {
+    const cv = document.querySelector(".sheet-wrap .cv");
+    const pageH = PAGE_SIZES[paperSize].h;
+
+    // Measure on screen (min-height: 1123px in effect, so scrollHeight >= pageH).
+    // If content overflows the page, inject a print-only zoom rule that shrinks
+    // the CV to fit exactly one page. Measurement before print() avoids the
+    // beforeprint timing race where browsers may already have paginated.
+    let printStyle = null;
+    if (cv) {
+      const naturalH = cv.scrollHeight;
+      if (naturalH > pageH) {
+        printStyle = document.createElement("style");
+        printStyle.id = "__cv-scale";
+        printStyle.textContent =
+          `@media print { .sheet-wrap .cv { zoom: ${(pageH / naturalH).toFixed(5)} !important; min-height: 0 !important; } }`;
+        document.head.appendChild(printStyle);
+      }
+    }
+
+    window.print();
+
+    const cleanup = () => {
+      printStyle?.remove();
+      window.removeEventListener("afterprint", cleanup);
+    };
+    window.addEventListener("afterprint", cleanup);
+  }, [paperSize]);
+
   const onKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -351,9 +401,21 @@ function Studio() {
           <span className={"chat-status" + (connected ? " is-connected" : "")} title={connected ? "Connected to agent" : "Connecting to agent…"}>
             <span className="dot" /> {connected ? "Connected" : "Connecting…"}
           </span>
-          <button className="btn-export" onClick={() => window.print()} title="Export the CV as a PDF">
-            {Icon.download()} Export PDF
-          </button>
+          <div className="export-group">
+            <div className="size-toggle" role="group" aria-label="Paper size">
+              {Object.entries(PAGE_SIZES).map(([key, { label }]) => (
+                <button
+                  key={key}
+                  className={"size-btn" + (paperSize === key ? " is-active" : "")}
+                  onClick={() => setPaperSize(key)}
+                  aria-pressed={paperSize === key}
+                >{label}</button>
+              ))}
+            </div>
+            <button className="btn-export" onClick={exportPdf} title={`Export as PDF (${PAGE_SIZES[paperSize].label})`}>
+              {Icon.download()} Export
+            </button>
+          </div>
         </div>
 
         <div className="thread" ref={threadRef}>
@@ -383,34 +445,35 @@ function Studio() {
       </aside>
 
       {/* RIGHT — preview canvas */}
-      <CanvasPane data={data} flash={flash} />
+      <CanvasPane data={data} flash={flash} paperSize={paperSize} />
     </div>
   );
 }
 
-function CanvasPane({ data, flash }) {
+function CanvasPane({ data, flash, paperSize }) {
   const scrollRef = useRef(null);
   const scaleRef = useRef(null);
   const [zoom, setZoom] = useState(1);
+  const page = PAGE_SIZES[paperSize] || PAGE_SIZES.a4;
 
   useEffect(() => {
     const measure = () => {
       const el = scrollRef.current;
       if (!el) return;
       const avail = el.clientWidth - 64; // horizontal padding
-      const z = Math.min(1, Math.max(0.4, avail / 794));
+      const z = Math.min(1, Math.max(0.4, avail / page.w));
       setZoom(z);
     };
     measure();
     const ro = new ResizeObserver(measure);
     if (scrollRef.current) ro.observe(scrollRef.current);
     return () => ro.disconnect();
-  }, []);
+  }, [page.w]);
 
   return (
     <main className="canvas">
       <div className="canvas-bar">
-        <span className="canvas-bar-label">Preview · A4</span>
+        <span className="canvas-bar-label">Preview · {page.label}</span>
         <div className="canvas-zoom">
           <span className="canvas-saved"><span className="dot" /> Synced</span>
           <span>{Math.round(zoom * 100)}%</span>
@@ -420,7 +483,7 @@ function CanvasPane({ data, flash }) {
         <div
           className="sheet-scale"
           ref={scaleRef}
-          style={{ transform: `scale(${zoom})`, height: 1123 * zoom }}
+          style={{ transform: `scale(${zoom})`, height: page.h * zoom }}
         >
           <div className={"sheet-wrap" + (flash ? " is-updating" : "")}>
             <ResumeA data={data} />

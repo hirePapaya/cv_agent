@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from google import genai
 from google.genai import types
@@ -34,6 +35,7 @@ def rewrite_skills(current: SkillsContent, job_posting: dict) -> SkillsContent:
         "keywords": job_posting.get("keywords", []),
     })
 
+    t0 = time.perf_counter()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
@@ -44,13 +46,17 @@ def rewrite_skills(current: SkillsContent, job_posting: dict) -> SkillsContent:
             response_schema=SkillsContent,
         ),
     )
+    elapsed = time.perf_counter() - t0
 
     if response.parsed is None:
         raise ValueError(f"Failed to parse rewritten skills: {response.text}")
+    result = response.parsed
+    category_names = list(result.categories.keys())
     logger.debug(
-        "Rewritten skills: %d categories", len(response.parsed.categories)
+        "skills: LLM %.2fs — %d categories: %s",
+        elapsed, len(category_names), ", ".join(category_names),
     )
-    return response.parsed
+    return result
 
 
 def skills_node(state: CVAgentState) -> dict:
@@ -60,17 +66,16 @@ def skills_node(state: CVAgentState) -> dict:
         logger.warning("skills_node skipped — no job_posting in state")
         return {}
 
-    logger.info("skills_node: loading current CV skills")
+    t_node = time.perf_counter()
+    logger.info("skills_node: start — role=%r", job_posting.get("title", "unknown"))
+
     cv = load_cv()
     logger.info(
-        "skills_node: rewriting skills for role '%s'",
-        job_posting.get("title", "unknown"),
+        "skills_node: rewriting %d skill categories",
+        len(cv.skills.categories),
     )
-
     updated = rewrite_skills(cv.skills, job_posting)
-
-    logger.info("skills_node: persisting updated skills to output.json")
     update_cv_section(updated)
 
-    logger.info("skills_node: done")
+    logger.info("skills_node: done in %.2fs", time.perf_counter() - t_node)
     return {}

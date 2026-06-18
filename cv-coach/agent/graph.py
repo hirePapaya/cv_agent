@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 def finish_node(_state: CVAgentState) -> dict:
-    """Fan-in node: reached once all parallel section nodes complete."""
-    logger.info("cv_enhance_graph: all sections complete")
+    """Fan-in node: reached once general_check completes — graph is done."""
+    logger.info("cv_enhance_graph: ✓ finished — output.json is up to date")
     return {}
 
 

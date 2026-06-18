@@ -1,0 +1,111 @@
+{
+  "profile": {
+    "name": "Rafael Campo",
+    "title": "Senior Software Engineer — Backend & Cloud Systems",
+    "text": "Backend Engineer with extensive experience designing, building, and maintaining high-throughput, scalable distributed backend systems for complex enterprise platforms. Proven expertise in modern web architecture, including leading microservices transitions and optimizing for performance, scalability, and reliability. Adept at leveraging backend technologies and databases to power three-sided marketplaces, with a focus on global expansion and proficiency in AI coding tools."
+  },
+  "contact": {
+    "phone": "+55 11 99217 4614",
+    "email": "1rafael.campo@gmail.com",
+    "github": "github.com/RafaelCampoTech",
+    "linkedin": "linkedin.com/in/rafaelcampo"
+  },
+  "experience": {
+    "jobs": [
+      {
+        "company": "Fullmind",
+        "title": "Software Engineer",
+        "start_date": "2026-07-01",
+        "end_date": "2026-12-01",
+        "location": "Remote",
+        "description": "",
+        "achievements": [
+          "Maintained and scaled core production backend systems within a complex, multi-language cloud-native environment.",
+          "Collaborated with compliance and engineering stakeholders to implement rigorous SOC 2 controls, successfully passing Vanta security audits while preserving developer velocity and operational reliability.",
+          "Applied advanced functional programming paradigms in Clojure and immutable data modeling to design predictable, maintainable backend service behaviors."
+        ]
+      },
+      {
+        "company": "Capitol AI",
+        "title": "Solution Architect — Cloud & Backend Systems",
+        "start_date": "2023-02-01",
+        "end_date": "2025-11-01",
+        "location": "New York, NY (Remote)",
+        "description": "",
+        "achievements": [
+          "Architected and deployed scalable, cloud-native backend infrastructures on AWS (EKS, Lambda, RDS, S3), integrating Generative AI frameworks including LangChain and Bedrock to support high-throughput, AI-enabled production systems.",
+          "Spearheaded the migration from monolithic architecture to high-availability distributed microservices, maximizing operational resilience, scalability, and deployment flexibility across enterprise workloads.",
+          "Engineered robust Infrastructure-as-Code workflows using Terraform, establishing reproducible environments and accelerating engineering onboarding cycles.",
+          "Optimized automated CI/CD pipelines to minimize deployment friction, directly elevating release reliability across cross-functional engineering teams.",
+          "Partnered with executive leadership to evaluate architectural trade-offs regarding scalability, execution speed, and performance, driving strategic cloud cost-optimization initiatives that yielded measurable infrastructure savings."
+        ]
+      },
+      {
+        "company": "Simetrik",
+        "title": "Implementation Analyst",
+        "start_date": "2020-07-01",
+        "end_date": "2022-05-01",
+        "location": null,
+        "description": "",
+        "achievements": [
+          "Served in a client-facing capacity to translate complex operational requirements into scalable, custom Python data integration solutions for enterprise workflows.",
+          "Executed high-volume data migrations and distributed replication initiatives across multi-cloud infrastructure environments.",
+          "Conducted performance optimization, systematic debugging, and root-cause analysis to ensure the uptime of mission-critical database and backend systems."
+        ]
+      }
+    ]
+  },
+  "education": {
+    "entries": [
+      {
+        "institution": "Universidad de los Andes",
+        "degree": "B.S. in Mechanical Engineering",
+        "start_date": "2016-01-01",
+        "end_date": "2020-01-01",
+        "location": "Bogotá, Colombia",
+        "gpa": null
+      }
+    ]
+  },
+  "skills": {
+    "categories": {
+      "Key Tech": [
+        "AWS (RDS, EKS, Lambda, S3, Bedrock, DynamoDB, ECR, CloudWatch)",
+        "GCP",
+        "Kubernetes",
+        "Terraform",
+        "AI Frameworks"
+      ],
+      "Languages": [
+        "Clojure",
+        "Java",
+        "Golang",
+        "Python",
+        "JavaScript"
+      ],
+      "Data & AI Systems": [
+        "PostgreSQL",
+        "Kafka",
+        "MySQL",
+        "Elasticsearch",
+        "Redis",
+        "LangChain",
+        "LangGraph",
+        "Qdrant",
+        "n8n",
+        "Make",
+        "Ultravox"
+      ],
+      "Tools": [
+        "GitHub",
+        "Claude code",
+        "GitHub Actions",
+        "Jira",
+        "Notion",
+        "Google Analytics",
+        "Cursor",
+        "Replit" 
+      ]
+    }
+  }
+}

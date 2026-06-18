@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from google import genai
 from google.genai import types
@@ -34,6 +35,7 @@ def rewrite_education(current: EducationContent, job_posting: dict) -> Education
         "keywords": job_posting.get("keywords", []),
     })
 
+    t0 = time.perf_counter()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
@@ -44,11 +46,15 @@ def rewrite_education(current: EducationContent, job_posting: dict) -> Education
             response_schema=EducationContent,
         ),
     )
-
+    elapsed = time.perf_counter() - t0
     if response.parsed is None:
         raise ValueError(f"Failed to parse rewritten education: {response.text}")
-    logger.debug("Rewritten education: %d entries", len(response.parsed.entries))
-    return response.parsed
+    result = response.parsed
+    logger.debug(
+        "education: LLM %.2fs — %d entries",
+        elapsed, len(result.entries),
+    )
+    return result
 
 
 def education_node(state: CVAgentState) -> dict:
@@ -58,17 +64,16 @@ def education_node(state: CVAgentState) -> dict:
         logger.warning("education_node skipped — no job_posting in state")
         return {}
 
-    logger.info("education_node: loading current CV education")
+    t_node = time.perf_counter()
+    logger.info("education_node: start — role=%r", job_posting.get("title", "unknown"))
+
     cv = load_cv()
     logger.info(
-        "education_node: rewriting education for role '%s'",
-        job_posting.get("title", "unknown"),
+        "education_node: rewriting %d education entries",
+        len(cv.education.entries),
     )
-
     updated = rewrite_education(cv.education, job_posting)
-
-    logger.info("education_node: persisting updated education to output.json")
     update_cv_section(updated)
 
-    logger.info("education_node: done")
+    logger.info("education_node: done in %.2fs", time.perf_counter() - t_node)
     return {}

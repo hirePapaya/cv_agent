@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from google import genai
 from google.genai import types
@@ -44,6 +45,7 @@ def check_and_fix_cv(cv: CurriculumVitae, job_posting: dict) -> CurriculumVitae:
         "keywords": job_posting.get("keywords", []),
     })
 
+    t0 = time.perf_counter()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
@@ -57,9 +59,11 @@ def check_and_fix_cv(cv: CurriculumVitae, job_posting: dict) -> CurriculumVitae:
             response_schema=CurriculumVitae,
         ),
     )
+    elapsed = time.perf_counter() - t0
 
     if response.parsed is None:
         raise ValueError(f"Failed to parse checked CV: {response.text}")
+    logger.debug("general_check: LLM %.2fs", elapsed)
     return response.parsed
 
 
@@ -71,20 +75,26 @@ def general_check_node(state: CVAgentState) -> dict:
         logger.warning("general_check_node skipped — no job_posting in state")
         return {}
 
-    logger.info("general_check_node: loading updated CV for final review")
-    cv = load_cv()
-
+    t_node = time.perf_counter()
     logger.info(
-        "general_check_node: running common errors + keyword check for role '%s'",
+        "general_check_node: start — role=%r  running common_errors + keywords pass",
         job_posting.get("title", "unknown"),
     )
+
+    cv = load_cv()
+    logger.info(
+        "general_check_node: CV loaded — %d jobs, %d education, %d skill categories",
+        len(cv.experience.jobs),
+        len(cv.education.entries),
+        len(cv.skills.categories),
+    )
+
     fixed_cv = check_and_fix_cv(cv, job_posting)
 
-    logger.info("general_check_node: persisting corrected sections to output.json")
     update_cv_section(fixed_cv.profile)
     update_cv_section(fixed_cv.experience)
     update_cv_section(fixed_cv.education)
     update_cv_section(fixed_cv.skills)
 
-    logger.info("general_check_node: done")
+    logger.info("general_check_node: done in %.2fs", time.perf_counter() - t_node)
     return {}

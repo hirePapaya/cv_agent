@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from google import genai
 from google.genai import types
@@ -34,6 +35,7 @@ def rewrite_experience(current: ExperienceContent, job_posting: dict) -> Experie
         "keywords": job_posting.get("keywords", []),
     })
 
+    t0 = time.perf_counter()
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=contents,
@@ -44,11 +46,17 @@ def rewrite_experience(current: ExperienceContent, job_posting: dict) -> Experie
             response_schema=ExperienceContent,
         ),
     )
+    elapsed = time.perf_counter() - t0
 
     if response.parsed is None:
         raise ValueError(f"Failed to parse rewritten experience: {response.text}")
-    logger.debug("Rewritten experience: %d jobs", len(response.parsed.jobs))
-    return response.parsed
+    result = response.parsed
+    total_bullets = sum(len(j.achievements) for j in result.jobs)
+    logger.debug(
+        "experience: LLM %.2fs — %d jobs, %d bullets total",
+        elapsed, len(result.jobs), total_bullets,
+    )
+    return result
 
 
 def experience_node(state: CVAgentState) -> dict:
@@ -58,17 +66,16 @@ def experience_node(state: CVAgentState) -> dict:
         logger.warning("experience_node skipped — no job_posting in state")
         return {}
 
-    logger.info("experience_node: loading current CV experience")
+    t_node = time.perf_counter()
+    logger.info("experience_node: start — role=%r", job_posting.get("title", "unknown"))
+
     cv = load_cv()
     logger.info(
-        "experience_node: rewriting experience for role '%s'",
-        job_posting.get("title", "unknown"),
+        "experience_node: rewriting %d jobs",
+        len(cv.experience.jobs),
     )
-
     updated = rewrite_experience(cv.experience, job_posting)
-
-    logger.info("experience_node: persisting updated experience to output.json")
     update_cv_section(updated)
 
-    logger.info("experience_node: done")
+    logger.info("experience_node: done in %.2fs", time.perf_counter() - t_node)
     return {}
