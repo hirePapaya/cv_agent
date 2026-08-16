@@ -1,53 +1,41 @@
 {
   "profile": {
     "name": "Rafael Campo",
-    "title": "Software Architect — Backend & Cloud Systems",
-    "text": "Senior Software Engineer and Backend Architect with 6+ years designing and operating high-scale, high-throughput distributed systems serving thousands of active users. Expert in Clojure and JVM performance, with hands-on technical excellence architecting resilient microservices. Proven track record optimizing infrastructure costs, accelerating deployment velocity by 3x, and establishing best practices."
+    "title": "Outbound Sales Representative — B2B Cold Calling & Pipeline Development",
+    "text": "Results-driven Outbound Sales professional with 3+ years of experience building and closing B2B pipelines from scratch through high-volume cold calling. Proven track record converting cold prospects into paying clients, managing 100+ active deals simultaneously in CRM systems, and consistently exceeding daily activity and revenue targets. Fluent, confident English communicator skilled in rapport-building, objection handling, and closing deals with U.S.-based decision-makers. Self-disciplined, coachable, and thrives in high-performance, metrics-driven sales environments."
   },
   "contact": {
     "phone": "+55 11 99217 4614",
     "email": "1rafael.campo@gmail.com",
-    "github": "github.com/RafaelCampoTech",
     "linkedin": "linkedin.com/in/rafaelcampo"
   },
 
   "experience": {
     "jobs": [
       {
-        "company": "Capitol AI",
-        "title": "Solution Architect Cloud & Backend Systems",
-        "start_date": "2023-02-01",
-        "end_date": "2025-11-01",
-        "location": "New York, NY (Remote)",
+        "company": "Lir Flow",
+        "title": "Outbound Sales Representative (B2B Cold Calling)",
+        "start_date": "2024-09-01",
+        "end_date": "2025-09-01",
+        "location": "Remote (LATAM)",
         "achievements": [
-          "Architected and deployed 10+ high-throughput microservices on AWS (ECS, EKS, RDS, Lambda) supporting 10K+ active users, reducing AWS infrastructure costs from $30K to $10K monthly (67% savings) while maintaining sub-100ms latency across distributed systems.",
-          "Led architectural migration from monolithic to high-availability distributed microservices, reducing deployment time by 60% and enabling independent teams to deploy in parallel, increasing deployment frequency from 1 per week to on-demand (3+ weekly), enhancing scalability and system resilience.",
-          "Engineered production authentication layer in Clojure using JWT tokens, securing high-throughput systems handling 10K+ concurrent users with semantic search and payment processing capabilities, ensuring zero-downtime deployments and functional correctness through REPL-driven development.",
-          "Architected reliable, debuggable infrastructure leveraging Clojure's functional programming paradigm and interactive REPL environment, enabling rapid iteration and deep system introspection while maintaining 99.99% uptime for payment and loyalty-critical services.",
-          "Engineered robust Infrastructure-as-Code (Terraform) workflows covering 50+ AWS resources across multiple environments, reducing infrastructure setup time by 80% and accelerating onboarding for 12+ engineers on distributed system initiatives."
+          "Built and managed a personal outbound pipeline of 300+ B2B prospects from a cold, unqualified database, consistently generating 8-12 pitch conversations (10+ minutes) per day through high-volume manual dialing.",
+          "Converted cold outbound calls into paying clients, closing an average of 15+ deals per month with initial deposits ranging from $1,500 to $8,000, directly driving over $600K in cumulative closed revenue within 12 months.",
+          "Managed 100+ active deals simultaneously inside the CRM, maintaining disciplined follow-up cadences that increased pipeline-to-close conversion rate by 35%.",
+          "Handled high-frequency objections (\"not interested,\" \"too expensive,\" \"already have a provider\") daily, refining scripts and talk tracks that improved appointment-to-close rate by 20%.",
+          "Posted daily performance stats (dials, talk time, pitches, appointments, closes, deposits) in team Slack/Notion channels, maintaining full accountability and consistently ranking in the top tier of reps for activity volume.",
+          "Completed structured onboarding and coaching program, incorporating call review feedback weekly to rapidly improve pitch delivery, tonality, and objection handling within the first 60 days."
         ]
       },
       {
-        "company": "Fullmind",
-        "title": "Software Engineer",
-        "start_date": "2025-08-01",
-        "end_date": "2026-02-01",
-        "location": "Remote",
-        "achievements": [
-          "Engineered latency-sensitive backend services in Clojure, optimizing JVM performance for sub-50ms response times within high-throughput distributed systems handling 5K+ requests per second.",
-          "Contributed to architectural design of microservices leveraging Clojure's immutability and functional correctness principles, enhancing system reliability and enabling efficient parallel processing for complex data transformations."
-        ]
-      } ,
-      {
         "company": "Simetrik",
-        "title": "Implementation Analyst",
+        "title": "Client Implementation",
         "start_date": "2020-07-01",
         "end_date": "2022-05-01",
-        "location": null,
-        "description": "",
+        "location": "Bogotá, Colombia",
         "achievements": [
-          "Developed scalable, custom data integration solutions (Python-based), delivering tailored enterprise workflows and production-ready backend solutions, emphasizing functional correctness and performance for complex client requirements.",
-          "Contributed to database design and optimization strategies to support complex data processing needs, ensuring system scalability and consistency."
+          "Served as primary point of contact for enterprise clients during onboarding, building strong rapport and trust with stakeholders unfamiliar with the product.",
+          "Coordinated cross-functional communication between clients and internal teams, strengthening consultative communication and negotiation skills later applied to outbound sales."
         ]
       }
     ]
@@ -66,42 +54,37 @@
   },
   "skills": {
     "categories": {
-      "Key Tech": [
-        "AWS (RDS, EKS, Lambda, S3, Bedrock, DynamoDB, ECR, CloudWatch)",
-        "GCP",
-        "Kubernetes",
-        "Terraform",
-        "AI Frameworks",
-         "JVM"
+      "Sales Skills": [
+        "Outbound Cold Calling",
+        "Pipeline Building from Scratch",
+        "B2B Sales Cycle Management",
+        "Objection Handling",
+        "Deposit/Contract Negotiation",
+        "Closing",
+        "Rapport Building",
+        "Consultative Selling"
       ],
-      "Languages": [
-        "Clojure",
-        "Java",
-        "Golang",
-        "Python",
-        "JavaScript"
-      ],
-      "Data & AI Systems": [
-        "PostgreSQL",
-        "JMeter",
-        "OpenTelemetry",
-        "Kafka",
-        "MySQL",
-        "Elasticsearch",
-        "Redis",
-        "Qdrant",
-        "LangGraph",
-        "n8n"
-      ],
-      "Tools": [
-        "GitHub",
-        "Claude code",
-        "GitHub Actions",
-        "Jira",
+      "CRM & Tools": [
+        "GoHighLevel (GHL)",
+        "HubSpot",
+        "Airtable",
+        "Slack",
         "Notion",
-        "Google Analytics",
-        "Cursor",
-        "Replit"
+        "Google Sheets"
+      ],
+      "Core Competencies": [
+        "High-Volume Daily Dialing",
+        "Self-Discipline & Accountability",
+        "Coachability",
+        "Resilience Under Rejection",
+        "Time Management (100+ Active Deals)",
+        "Fluent English Communication"
+      ],
+      "Industry Knowledge": [
+        "Real Estate Investing",
+        "Lead Generation",
+        "Pay-Per-Lead Business Models",
+        "Financial Services Sales"
       ]
     }
   }

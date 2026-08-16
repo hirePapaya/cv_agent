@@ -1,0 +1,123 @@
+{
+  "profile": {
+    "name": "Rafael Campo",
+    "title": "DevOps and Cloud Security Engineer - AWS Infrastructure",
+    "text": "DevOps and Cloud Security Engineer with 6+ years securing and operating high-throughput AWS infrastructure for distributed systems serving 10K+ users. Hands-on across IAM and least-privilege access controls, VPC and network hardening, secrets management (KMS, Secrets Manager), CI/CD pipeline security, and incident response. Implemented SOC 2 compliance controls and built CloudWatch-based monitoring, alerting, and vulnerability scanning into production environments. Proven track record reducing AWS infrastructure costs by 67%, accelerating deployment velocity, and translating security risk into practical, lightweight action for engineering and leadership."
+  },
+  "contact": {
+    "phone": "+55 11 99217 4614",
+    "email": "1rafael.campo@gmail.com",
+    "github": "github.com/RafaelCampoTech",
+    "linkedin": "linkedin.com/in/rafaelcampo"
+  },
+
+  "experience": {
+    "jobs": [
+      {
+        "company": "Capitol AI",
+        "title": "DevOps Engineer and Cloud Solution Architect",
+        "start_date": "2023-02-01",
+        "end_date": "2025-11-01",
+        "date_display": "02/2023 - 11/2025",
+        "location": "New York, NY (Remote)",
+        "achievements": [
+          "Architected and hardened 10+ high-throughput AWS microservices (ECS, EKS, RDS, Lambda) for 10K+ active users, enforcing least-privilege Identity and Access Management (IAM) roles and VPC network hardening, reducing AWS infrastructure costs by 67 percent (from 30K to 10K USD monthly) while maintaining sub-100ms latency across distributed systems.",
+          "Re-architected continuous integration and delivery (CI/CD) deployment pipelines with embedded security controls during a monolith-to-microservices migration, reducing deployment time by 60 percent and increasing release frequency from weekly to on-demand (3+ weekly) with zero-downtime, parallel team deployments.",
+          "Engineered a production authentication layer in Clojure with OAuth and single sign-on (SSO) integration and JWT, securing 10K+ concurrent users across payment processing and semantic search services and integrating AWS Secrets Manager and KMS for secrets management and data protection.",
+          "Established CloudWatch observability, alerting, and incident response procedures for payment- and loyalty-critical services, sustaining 99.99 percent uptime and enabling rapid detection and remediation of security and reliability events.",
+          "Engineered Infrastructure-as-Code (Terraform) workflows across 50+ AWS resources and multiple environments, integrating vulnerability scanning and consistent security configuration into provisioning, reducing setup time by 80 percent and onboarding 12+ engineers."
+        ]
+      },
+      {
+        "company": "Fullmind",
+        "title": "Software Engineer and SOC 2 Implementation Lead",
+        "start_date": "2025-08-01",
+        "end_date": "2026-02-01",
+        "date_display": "08/2025 - 02/2026",
+        "location": "Remote",
+        "achievements": [
+          "Implemented SOC 2 compliance controls across cloud infrastructure and CI/CD pipelines, partnering with engineering and leadership to align IAM access controls, audit logging, and data protection with compliance audit requirements.",
+          "Engineered latency-sensitive Clojure backend services optimized for sub-50ms response times at 5K+ requests per second, applying secure-by-design and functional-correctness principles to harden high-throughput distributed systems.",
+          "Documented security recommendations and maintained lightweight playbooks for access management and incident handling, enabling the team to operate compliant processes without heavy operational overhead."
+        ]
+      },
+      {
+        "company": "Simetrik",
+        "title": "Implementation Analyst",
+        "start_date": "2020-07-01",
+        "end_date": "2022-05-01",
+        "date_display": "07/2020 - 05/2022",
+        "location": null,
+        "description": "",
+        "achievements": [
+          "Developed scalable, production-ready Python data integration solutions for enterprise clients, applying secure data handling and access-control practices across complex client workflows.",
+          "Contributed to database design and optimization strategies supporting complex data processing, ensuring system scalability, consistency, and reliable data integrity."
+        ]
+      }
+    ]
+  },
+  "education": {
+    "entries": [
+      {
+        "institution": "Universidad de los Andes",
+        "degree": "B.S. in Mechanical Engineering",
+        "start_date": "2016-01-01",
+        "end_date": "2020-01-01",
+        "date_display": "01/2016 - 01/2020",
+        "location": "Bogota, Colombia",
+        "gpa": null
+      }
+    ]
+  },
+  "skills": {
+    "categories": {
+      "Security and Compliance": [
+        "Identity and Access Management (IAM)",
+        "Least-privilege access controls",
+        "VPC and network hardening",
+        "Secrets management (KMS, Secrets Manager)",
+        "Vulnerability scanning and monitoring",
+        "Incident response",
+        "CI/CD pipeline security",
+        "SOC 2 compliance",
+        "OAuth and SSO",
+        "JWT"
+      ],
+      "Cloud and Infrastructure": [
+        "AWS (IAM, ECS, EKS, RDS, Lambda, S3, KMS, Secrets Manager, CloudWatch, DynamoDB, ECR, Bedrock)",
+        "GCP",
+        "Kubernetes",
+        "Terraform (Infrastructure-as-Code)",
+        "GitHub Actions (CI/CD)",
+        "JVM"
+      ],
+      "Languages": [
+        "Clojure",
+        "Java",
+        "Golang",
+        "Python",
+        "JavaScript"
+      ],
+      "Data and Observability": [
+        "PostgreSQL",
+        "MySQL",
+        "OpenTelemetry",
+        "CloudWatch",
+        "Kafka",
+        "Elasticsearch",
+        "Redis",
+        "Qdrant",
+        "JMeter",
+        "LangGraph"
+      ],
+      "Tools": [
+        "GitHub",
+        "GitHub Actions",
+        "Jira",
+        "Notion",
+        "Cursor",
+        "Claude Code"
+      ]
+    }
+  }
+}
